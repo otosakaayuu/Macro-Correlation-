@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Macro Compass — Probability &amp; Korelasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0b0e14;
+  --panel:#12161f;
+  --panel2:#181d29;
+  --line:rgba(255,255,255,.07);
+  --line2:rgba(255,255,255,.12);
+  --txt:#dfe4ee;
+  --txt2:#8893a8;
+  --txt3:#4d5567;
+  --teal:#2dd4bf;
+  --teal-dim:rgba(45,212,191,.14);
+  --rose:#fb7185;
+  --rose-dim:rgba(251,113,133,.14);
+  --amber:#fbbf24;
+  --amber-dim:rgba(251,191,36,.14);
+  --violet:#a78bfa;
+  --disp:'Space Grotesk',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:14px;-webkit-font-smoothing:antialiased}
+body{min-height:100vh}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+
+a{color:var(--teal)}
+select,input{
+  background:var(--panel2);
+  border:1px solid var(--line2);
+  border-radius:8px;
+  color:var(--txt);
+  padding:9px 12px;
+  font-family:var(--mono);
+  font-size:13px;
+  outline:none;
+  width:100%;
+}
+select:focus,input:focus{border-color:var(--teal)}
+button{
+  cursor:pointer;border:none;font-family:var(--disp);font-weight:600;
+  border-radius:8px;transition:all .15s;
+}
+
+/* ───────────────────────── LAYOUT ───────────────────────── */
+#shell{max-width:1180px;margin:0 auto;padding:0 18px 60px}
+
+header{
+  padding:28px 0 22px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:22px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal) 0%, var(--violet) 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-weight:700;font-size:18px;color:#0b0e14;
+  flex-shrink:0;
+}
+.brand h1{
+  font-family:var(--disp);font-size:21px;font-weight:700;letter-spacing:.2px;
+}
+.brand p{color:var(--txt2);font-size:12px;margin-top:2px}
+.live-clock{font-family:var(--mono);font-size:12px;color:var(--txt3);text-align:right}
+.live-clock b{color:var(--txt2);display:block;font-size:13px}
+
+/* ───────────────────────── NAV ───────────────────────── */
+nav{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap}
+.navbtn{
+  background:transparent;color:var(--txt2);
+  border:1px solid var(--line);padding:9px 16px;border-radius:8px;
+  font-size:13px;letter-spacing:.3px;
+}
+.navbtn:hover{border-color:var(--line2);color:var(--txt)}
+.navbtn.active{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+
+.view{display:none}
+.view.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ───────────────────────── PANEL ───────────────────────── */
+.panel{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px;margin-bottom:18px;
+}
+.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.panel-title{font-family:var(--disp);font-size:15px;font-weight:600;color:var(--txt)}
+.panel-sub{color:var(--txt2);font-size:12px;line-height:1.6}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+label.f{display:block;font-size:11px;letter-spacing:.6px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px;font-family:var(--disp);font-weight:600}
+
+/* ───────────────────────── HERO / SELECTOR ───────────────────────── */
+.hero{
+  border:1px solid var(--line);border-radius:var(--r);
+  background:radial-gradient(circle at 100% 0%, rgba(167,139,250,.08), transparent 55%),
+             radial-gradient(circle at 0% 100%, rgba(45,212,191,.08), transparent 55%),
+             var(--panel);
+  padding:26px;margin-bottom:20px;
+}
+.hero h2{font-family:var(--disp);font-size:20px;font-weight:700;margin-bottom:6px}
+.hero p{color:var(--txt2);font-size:13px;line-height:1.7;max-width:640px;margin-bottom:18px}
+
+/* ───────────────────────── BIAS BANNER ───────────────────────── */
+.bias-banner{
+  border-radius:var(--r);padding:18px 22px;margin:18px 0 4px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  border:1px solid;
+}
+.bias-banner.long{background:var(--teal-dim);border-color:rgba(45,212,191,.4)}
+.bias-banner.short{background:var(--rose-dim);border-color:rgba(251,113,133,.4)}
+.bias-banner.neutral{background:rgba(255,255,255,.04);border-color:var(--line2)}
+.bias-banner.mixed{background:var(--amber-dim);border-color:rgba(251,191,36,.4)}
+.bias-tag{
+  font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:1.5px;
+  padding:7px 14px;border-radius:7px;flex-shrink:0;
+}
+.bias-banner.long .bias-tag{background:var(--teal);color:#06281f}
+.bias-banner.short .bias-tag{background:var(--rose);color:#330a10}
+.bias-banner.neutral .bias-tag{background:var(--txt3);color:#0b0e14}
+.bias-banner.mixed .bias-tag{background:var(--amber);color:#332300}
+.bias-banner .desc{font-size:12.5px;color:var(--txt2);line-height:1.6}
+.bias-banner .desc b{color:var(--txt)}
+
+/* ───────────────────────── SIGNAL TABLE ───────────────────────── */
+.cat-block{margin-top:18px}
+.cat-block h3{
+  font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:1.5px;
+  color:var(--txt3);text-transform:uppercase;margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.cat-block h3::after{content:'';flex:1;height:1px;background:var(--line)}
+
+.sigrow{
+  display:grid;grid-template-columns:120px 90px 50px 1fr;gap:12px;align-items:center;
+  padding:10px 4px;border-bottom:1px solid var(--line);font-size:13px;
+}
+.sigrow:last-child{border-bottom:none}
+.sigrow .asset{font-family:var(--disp);font-weight:600;color:var(--txt)}
+.sigrow .asset small{display:block;font-family:var(--mono);font-weight:400;font-size:10.5px;color:var(--txt3)}
+.dirpill{
+  font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:1px;
+  padding:4px 10px;border-radius:6px;text-align:center;
+}
+.dirpill.LONG{background:var(--teal-dim);color:var(--teal)}
+.dirpill.SHORT{background:var(--rose-dim);color:var(--rose)}
+.dirpill.NEUTRAL{background:rgba(255,255,255,.06);color:var(--txt3)}
+.probcell{font-family:var(--mono);font-weight:600;font-size:13px}
+.probbar{height:5px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:5px;overflow:hidden;width:60px}
+.probbar i{display:block;height:100%;border-radius:3px}
+.note{color:var(--txt2);font-size:12px;line-height:1.5}
+
+/* ───────────────────────── CORRELATION MATRIX ───────────────────────── */
+.matrix-wrap{overflow-x:auto}
+table.matrix{border-collapse:collapse;font-size:11px;min-width:680px}
+table.matrix th,table.matrix td{
+  width:46px;height:38px;text-align:center;vertical-align:middle;
+  font-family:var(--mono);font-weight:600;border:1px solid var(--line);
+}
+table.matrix th{
+  background:var(--panel2);color:var(--txt2);font-size:10px;letter-spacing:.5px;
+}
+table.matrix th.rowhead{
+  text-align:left;padding-left:10px;font-family:var(--disp);font-weight:600;color:var(--txt);width:90px;
+}
+.ccell{cursor:default;border-radius:0;font-size:11px}
+.ccell.self{background:var(--panel2);color:var(--txt3)}
+
+/* legend */
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:11px;color:var(--txt2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
+
+/* pair list */
+.pairlist{margin-top:8px}
+.pairrow{
+  display:grid;grid-template-columns:1fr 80px 100px 1fr;gap:12px;align-items:center;
+  padding:11px 4px;border-bottom:1px solid var(--line);font-size:12.5px;
+}
+.pairrow:last-child{border-bottom:none}
+.pairrow .pa{font-family:var(--disp);font-weight:600}
+.pairrow .pv{font-family:var(--mono);font-weight:700;text-align:center}
+.pairrow .pv.pos{color:var(--teal)}
+.pairrow .pv.neg{color:var(--rose)}
+.strengthpill{
+  font-family:var(--disp);font-weight:700;font-size:10px;letter-spacing:.8px;
+  padding:4px 8px;border-radius:6px;text-align:center;text-transform:uppercase;
+}
+.strengthpill.vs{background:var(--teal-dim);color:var(--teal)}
+.strengthpill.s{background:rgba(167,139,250,.16);color:var(--violet)}
+.strengthpill.m{background:var(--amber-dim);color:var(--amber)}
+.strengthpill.w{background:rgba(255,255,255,.05);color:var(--txt2)}
+.pairrow .pn{color:var(--txt2)}
+
+/* ───────────────────────── CALENDAR CARDS ───────────────────────── */
+.cal-card{
+  background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 18px;margin-bottom:12px;
+}
+.cal-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.cal-head h4{font-family:var(--disp);font-size:14.5px;font-weight:700}
+.cal-meta{font-size:11px;color:var(--txt3);font-family:var(--mono)}
+.cal-row{font-size:12.5px;color:var(--txt2);line-height:1.7;margin-top:4px}
+.cal-row b{color:var(--txt)}
+.cal-outcomes{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.outc-chip{
+  font-family:var(--disp);font-weight:700;font-size:10.5px;letter-spacing:.8px;
+  padding:5px 11px;border-radius:6px;border:1px solid var(--line2);color:var(--txt2);
+  cursor:pointer;transition:all .12s;
+}
+.outc-chip:hover{border-color:var(--teal);color:var(--teal)}
+
+/* footer */
+footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);color:var(--txt3);font-size:11.5px;line-height:1.8;text-align:center}
+
+/* utility */
+.muted{color:var(--txt3)}
+.tag-cat{
+  font-family:var(--disp);font-weight:600;font-size:10px;letter-spacing:1px;
+  color:var(--txt3);text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+<div id="shell">
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark">MC</div>
+      <div>
+        <h1>Macro Compass</h1>
+        <p>Probability &amp; korelasi makro untuk Crypto · Forex · Komoditas — 100% offline</p>
+      </div>
+    </div>
+    <div class="live-clock">
+      <b id="clockTime">--:--:--</b>
+      <span id="clockDate">-</span>
+    </div>
+  </header>
+
+  <nav>
+    <button class="navbtn active" data-view="signal" onclick="go('signal')">Sinyal Event</button>
+    <button class="navbtn" data-view="corr" onclick="go('corr')">Korelasi Aset</button>
+    <button class="navbtn" data-view="calendar" onclick="go('calendar')">Kalender Macro</button>
+  </nav>
+
+  <!-- ══════════════ VIEW: SIGNAL ══════════════ -->
+  <div class="view active" id="view-signal">
+    <div class="hero">
+      <h2>Pilih event &amp; hasilnya</h2>
+      <p>Pilih event makro yang baru/akan rilis, lalu pilih hasilnya dibanding ekspektasi pasar. Tool akan menampilkan arah probable (LONG/SHORT/NEUTRAL) dan tingkat keyakinan untuk setiap aset yang kamu pantau.</p>
+      <div class="grid2">
+        <div>
+          <label class="f">Event Macro</label>
+          <select id="evSelect" onchange="onEventChange()"></select>
+        </div>
+        <div>
+          <label class="f">Hasil vs Ekspektasi</label>
+          <select id="outSelect" onchange="renderSignals()"></select>
+        </div>
+      </div>
+    </div>
+
+    <div id="biasBanner"></div>
+    <div id="eventNote" class="panel-sub" style="margin:14px 2px 0"></div>
+
+    <div id="signalResults"></div>
+  </div>
+
+  <!-- ══════════════ VIEW: CORRELATION ══════════════ -->
+  <div class="view" id="view-corr">
+    <div class="hero">
+      <h2>Korelasi antar-aset</h2>
+      <p>Hubungan historis umum antar aset yang sering dipakai trader makro. Korelasi ini statis (basis pola hubungan yang sudah dikenal luas) — gunakan untuk konfirmasi: kalau dua aset berkorelasi kuat tapi bergerak berlawanan dari biasanya, itu sinyal ada divergence yang layak diperhatikan.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Pasangan korelasi terkuat</div>
+        <div class="panel-sub">Diurutkan dari korelasi paling kuat (mutlak)</div>
+      </div>
+      <div class="pairlist" id="pairList"></div>
+      <div class="legend">
+        <span><i style="background:var(--teal)"></i> Korelasi positif (bergerak searah)</span>
+        <span><i style="background:var(--rose)"></i> Korelasi negatif (bergerak berlawanan)</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Matrix korelasi</div>
+        <div class="panel-sub">Hijau = positif kuat · Merah = negatif kuat · Abu = lemah/tidak ada data</div>
+      </div>
+      <div class="matrix-wrap" id="matrixWrap"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ VIEW: CALENDAR ══════════════ -->
+  <div class="view" id="view-calendar">
+    <div class="hero">
+      <h2>Kalender macro reference</h2>
+      <p>Daftar event makro rutin yang paling sering menggerakkan crypto, forex, dan komoditas, lengkap dengan jadwal tipikal, apa yang harus diperhatikan, dan kenapa pasar peduli. Tap salah satu hasil untuk lompat langsung ke tabel sinyal.</p>
+    </div>
+    <div id="calendarList"></div>
+  </div>
+
+  <footer>
+    Semua data &amp; angka probability di tool ini bersifat <b style="color:var(--txt2)">estimasi heuristik berbasis pola makro umum</b>,
+    bukan hasil backtest statistik dari data live — gunakan sebagai kerangka berpikir, bukan sinyal eksekusi otomatis.<br/>
+    Tool ini berjalan 100% di browser kamu, tanpa API key, tanpa koneksi eksternal, dan tanpa data tersimpan di server manapun.
+  </footer>
+
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
